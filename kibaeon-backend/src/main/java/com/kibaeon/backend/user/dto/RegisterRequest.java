@@ -13,7 +13,7 @@ public class RegisterRequest {
     private String email;
 
     @NotBlank(message = "비밀번호를 적어주세요.")
-    @Size(min = 8, max = 20, message = "비밀번호는 8자 ~ 20자 사이여야해요.")
+    @Size(min = 8, max = 20, message = "비밀번호는 8자 ~ 20자 사이여야 해요.")
     private String password;
 
     @NotBlank(message = "닉네임을 적어주세요.")
