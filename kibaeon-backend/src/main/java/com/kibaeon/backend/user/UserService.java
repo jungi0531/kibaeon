@@ -46,4 +46,8 @@ public class UserService {
     public User findById(long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("유저를 찾을 수 없어요."));
     }
+
+    public boolean isEmailDuplicated(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }

@@ -4,6 +4,7 @@ import com.kibaeon.backend.config.JwtTokenProvider;
 import com.kibaeon.backend.user.dto.LoginRequest;
 import com.kibaeon.backend.user.dto.RegisterRequest;
 import com.kibaeon.backend.user.dto.UserResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class UserController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         userService.register(request);
 
         return ResponseEntity.ok("회원가입 성공");
@@ -41,5 +43,11 @@ public class UserController {
         User user = userService.findById(userId);
 
         return ResponseEntity.ok(UserResponse.from(user));
+    }
+
+    @GetMapping("/check-email")
+    public ResponseEntity<Boolean> checkEmail(@RequestParam String email) {
+        boolean duplicated = userService.isEmailDuplicated(email);
+        return ResponseEntity.ok(duplicated);
     }
 }
