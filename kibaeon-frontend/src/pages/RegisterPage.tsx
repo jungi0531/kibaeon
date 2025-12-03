@@ -7,6 +7,7 @@ function RegisterPage() {
     const navigate = useNavigate();
 
     const [emailCheckMsg, setEmailCheckMsg] = useState<string | null>(null);
+    const [isEmailChecked, setIsEmailChecked] = useState(false);
     const [form, setForm] = useState({
         email: "",
         password: "",
@@ -40,8 +41,10 @@ function RegisterPage() {
 
             if (res.data === true) {
                 setEmailCheckMsg("이미 사용 중인 이메일이에요.");
+                setIsEmailChecked(false);
             } else {
                 setEmailCheckMsg("사용 가능한 이메일입니다!");
+                setIsEmailChecked(true);
             }
 
         } catch (error) {
@@ -70,6 +73,9 @@ function RegisterPage() {
 
         if (!validateEmail(form.email)) {
             newErrors.email = "올바른 이메일 형식을 입력해주세요.";
+        }
+        if (!isEmailChecked) {
+            newErrors.email = "이메일 중복 확인을 먼저 해주세요.";
         }
         if (form.password.length < 8 || form.password.length > 20) {
             newErrors.password = "비밀번호는 8 ~ 20자 사이여야 해요.";
@@ -127,6 +133,7 @@ function RegisterPage() {
                                 onChange={(e) => {
                                     handleChange(e);
                                     setEmailCheckMsg(null);
+                                    setIsEmailChecked(false);
                                 }}
                                 required
                             />
