@@ -4,7 +4,6 @@ import api from "../api/axios";
 import "./RegisterPage.css";
 
 function RegisterPage() {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const navigate = useNavigate();
 
     const [emailCheckMsg, setEmailCheckMsg] = useState<string | null>(null);
@@ -18,6 +17,10 @@ function RegisterPage() {
 
     const [errors, setErrors] = useState({} as Record<string, string>);
 
+    const validateEmail = (email: string) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    };
+
     async function handleCheckEmail() {
 
         if (!form.email) {
@@ -25,7 +28,7 @@ function RegisterPage() {
             return;
         }
 
-        if (!emailRegex.test(form.email)) {
+        if (!validateEmail(form.email)) {
             setEmailCheckMsg("올바른 이메일 형식을 입력해주세요.");
             return;
         }
@@ -65,7 +68,7 @@ function RegisterPage() {
 
         const newErrors: Record<string, string> = {};
 
-        if (!emailRegex.test(form.email)) {
+        if (!validateEmail(form.email)) {
             newErrors.email = "올바른 이메일 형식을 입력해주세요.";
         }
         if (form.password.length < 8 || form.password.length > 20) {
