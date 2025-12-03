@@ -17,7 +17,7 @@ public class RegisterRequest {
     private String password;
 
     @NotBlank(message = "닉네임을 적어주세요.")
-    @Size(min = 2, max = 10, message = "닉네임은 2자 ~ 10자 사이여야해요.")
+    @Size(min = 2, max = 10, message = "닉네임은 2자 ~ 10자 사이여야 해요.")
     private String nickname;
 
     private CharacterType characterType;
