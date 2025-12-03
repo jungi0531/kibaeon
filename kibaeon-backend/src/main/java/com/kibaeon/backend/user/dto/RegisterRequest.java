@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 public class RegisterRequest {
     @Email(message = "이메일 형식이 올바르지 않아요.")
-    @NotBlank(message = "이메일을 적어주세요")
+    @NotBlank(message = "이메일을 적어주세요.")
     private String email;
 
     @NotBlank(message = "비밀번호를 적어주세요.")
