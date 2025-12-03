@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 import axios from "axios";
+import "./LoginPage.css";
 
 function LoginPage() {
     const [email, setEmail] = useState("");
@@ -35,31 +36,47 @@ function LoginPage() {
     }
 
     return (
-        <form onSubmit={handleLoginSubmit}>
-            <h1>로그인</h1>
+        <div className="login-container">
+            <div className="login-header">
+                <h1 className="login-logo">KIBAEON</h1>
+            </div>
 
-            <input 
-                type="email"
-                placeholder="이메일 입력"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
-            <input 
-                type="password"
-                placeholder="비밀번호 입력"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
-            {errorMessage && (
-                <p style={{ color: "red", fontSize: "14px"}}>
-                    {errorMessage}
-                </p>
-            )}
+            <div className="login-card">
+                <h2 className="login-title">로그인</h2>
+                
+                <form className="login-form" onSubmit={handleLoginSubmit}>
+                    <input 
+                        className="login-input"
+                        type="email"
+                        placeholder="이메일 입력"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                    
+                    <input 
+                        className="login-input"
+                        type="password"
+                        placeholder="비밀번호 입력"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                    
+                    {errorMessage && (
+                        <p className="login-error">
+                            {errorMessage}
+                        </p>
+                    )}
 
-            <button type="submit">로그인</button>
+                    <button className="login-button" type="submit">로그인</button>
+                </form>
 
-            <Link to="/register">회원가입</Link>
-        </form>
+                <div className="login-footer">
+                    <Link className="login-link" to="/register">회원가입 하러가기</Link>
+                </div>
+            </div>
+        </div>
     )
 }
 
