@@ -4,7 +4,6 @@ import com.kibaeon.backend.config.JwtTokenProvider;
 import com.kibaeon.backend.user.dto.UserSummaryInfoResponse;
 import com.kibaeon.backend.user.dto.LoginRequest;
 import com.kibaeon.backend.user.dto.RegisterRequest;
-import com.kibaeon.backend.user.dto.UserResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
