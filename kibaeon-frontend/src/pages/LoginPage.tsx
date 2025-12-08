@@ -18,7 +18,7 @@ function LoginPage() {
                 email,
                 password,
             });
-            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("token", response.data);
             setErrorMessage("");
             navigate("/lobby");
         } catch (error) {

@@ -2,6 +2,7 @@ package com.kibaeon.backend.user;
 
 import com.kibaeon.backend.user.dto.LoginRequest;
 import com.kibaeon.backend.user.dto.RegisterRequest;
+import com.kibaeon.backend.user.dto.UserSummaryInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,5 +50,23 @@ public class UserService {
 
     public boolean isEmailDuplicated(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    private double calculateWinRate(double winCount, double totalCount) {
+        if (totalCount == 0) return 0.0;
+        return winCount / totalCount;
+    }
+    public UserSummaryInfoResponse getUserSummaryInfo(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저예요."));
+
+        UserSummaryInfoResponse userSummaryInfoResponse = UserSummaryInfoResponse.builder()
+                .nickname(user.getNickname())
+                .totalGames(user.getTotalGames())
+                .winCount(user.getWinCount())
+                .winRate(calculateWinRate(user.getWinCount(), user.getTotalGames()))
+                .characterType(user.getCharacterType())
+                .build();
+
+        return userSummaryInfoResponse;
     }
 }

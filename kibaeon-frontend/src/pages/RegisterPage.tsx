@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 import "./RegisterPage.css";
+import CharacterDisplay from "../components/characterDisplay";
+import { CHARACTER_TYPES } from "../constants/character";
 
 function RegisterPage() {
     const navigate = useNavigate();
@@ -43,7 +45,7 @@ function RegisterPage() {
                 setEmailCheckMsg("이미 사용 중인 이메일이에요.");
                 setIsEmailChecked(false);
             } else {
-                setEmailCheckMsg("사용 가능한 이메일입니다!");
+                setEmailCheckMsg("사용 가능한 이메일이에요!");
                 setIsEmailChecked(true);
             }
 
@@ -195,8 +197,14 @@ function RegisterPage() {
                             value={form.characterType}
                             onChange={handleChange}
                         >
-                            <option value="KEYCAP_01">🎮 키캡 기본</option>
+                            {CHARACTER_TYPES.map((c) => (
+                                <option key={c.value} value={c.value}>
+                                    {c.label}
+                                </option>
+                            ))}
                         </select>
+
+                        <CharacterDisplay characterType={form.characterType} />
                     </div>
 
                     {errors.server && (
