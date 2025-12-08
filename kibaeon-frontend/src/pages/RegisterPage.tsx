@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 import "./RegisterPage.css";
-import CharacterDisplay from "../components/characterDisplay";
+import CharacterDisplay from "../components/CharacterDisplay";
 import { CHARACTER_TYPES } from "../constants/character";
 
 function RegisterPage() {
