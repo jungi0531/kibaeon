@@ -1,15 +1,16 @@
 package com.kibaeon.backend.user;
 
 import com.kibaeon.backend.config.JwtTokenProvider;
+import com.kibaeon.backend.user.dto.UserSummaryInfoResponse;
 import com.kibaeon.backend.user.dto.LoginRequest;
 import com.kibaeon.backend.user.dto.RegisterRequest;
-import com.kibaeon.backend.user.dto.UserResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,12 @@ public class UserController {
         return ResponseEntity.ok("회원가입 성공");
     }
 
+    @GetMapping("/check-email")
+    public ResponseEntity<Boolean> checkEmail(@RequestParam @Email String email) {
+        boolean duplicated = userService.isEmailDuplicated(email);
+        return ResponseEntity.ok(duplicated);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         User user = userService.login(request);
@@ -40,17 +47,11 @@ public class UserController {
         return ResponseEntity.ok(token);
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<?> getMyInfo(Authentication auth) {
+    @GetMapping("/users/me")
+    public ResponseEntity<UserSummaryInfoResponse> getUserSummaryInfo(Authentication auth) {
         Long userId = Long.parseLong(auth.getName());
-        User user = userService.findById(userId);
+        UserSummaryInfoResponse response = userService.getUserSummaryInfo(userId);
 
-        return ResponseEntity.ok(UserResponse.from(user));
-    }
-
-    @GetMapping("/check-email")
-    public ResponseEntity<Boolean> checkEmail(@RequestParam @Email String email) {
-        boolean duplicated = userService.isEmailDuplicated(email);
-        return ResponseEntity.ok(duplicated);
+        return ResponseEntity.ok(response);
     }
 }
