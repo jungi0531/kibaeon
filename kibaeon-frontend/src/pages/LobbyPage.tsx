@@ -21,10 +21,15 @@ function LobbyPage() {
             try {
                 const res = await api.get("/users/me");
                 setUser(res.data);
-            } catch (error) {
-                console.log(error);
-                alert("유저 정보 가져오기를 실패했어요.");
-                navigate("/login");
+            } catch (error: any) {
+                if (error.response && error.response.status === 401) {
+                    alert("로그인 정보가 만료되었거나 유효하지 않아요. 다시 로그인해주세요.");
+                    navigate("/login");
+                } else if (error.message === "Network Error" || !error.response) {
+                    alert("네트워크 오류로 유저 정보를 가져올 수 없어요. 인터넷 연결을 확인하고 다시 시도해주세요.");
+                } else {
+                    alert("서버 오류로 유저 정보를 가져올 수 없어요. 잠시 후 다시 시도해주세요.");
+                }
             }
         }
         fetchUser();

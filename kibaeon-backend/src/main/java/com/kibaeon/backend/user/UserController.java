@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -47,9 +48,10 @@ public class UserController {
     }
 
     @GetMapping("/users/me")
-    public ResponseEntity<UserSummaryInfoResponse> getUserSummaryInfo(@AuthenticationPrincipal Long userId) {
+    public ResponseEntity<UserSummaryInfoResponse> getUserSummaryInfo(Authentication auth) {
+        Long userId = Long.parseLong(auth.getName());
         UserSummaryInfoResponse response = userService.getUserSummaryInfo(userId);
-        System.out.println("asdasdas");
+
         return ResponseEntity.ok(response);
     }
 }
