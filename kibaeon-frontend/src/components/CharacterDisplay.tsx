@@ -5,7 +5,7 @@ interface Props {
 }
 
 export default function CharacterDisplay({ characterType }: Props) {
-    const imageSrc = characterImages[characterType] || characterImages["KEYCAP_01"]
+    const imageSrc = characterImages[characterType] || characterImages["KEYCAP_01"];
 
     return (
         <img
