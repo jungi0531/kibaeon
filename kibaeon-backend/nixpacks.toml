@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["jdk17"]
+
+[phases.build]
+cmds = ["chmod +x gradlew", "./gradlew clean bootJar --no-daemon"]
+
+[start]
+cmd = "java -jar build/libs/*.jar"
