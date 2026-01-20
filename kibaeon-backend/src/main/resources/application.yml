@@ -12,6 +12,10 @@ spring:
         format_sql: true
     show-sql: ${SHOW_SQL:true}
 
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+
 server:
   port: ${PORT:8080}
 
