@@ -32,7 +32,7 @@ function RoomPage() {
     const { roomId } = useParams<{ roomId: string }>();
     const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
 
-    const { data: user, isLoading: userLoading } = useQuery<UserSummaryInfo>({
+    const { isLoading: userLoading } = useQuery<UserSummaryInfo>({
         queryKey: ['user', 'me'],
         queryFn: async () => {
             const res = await api.get("/users/me");
