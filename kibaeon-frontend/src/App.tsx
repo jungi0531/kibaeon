@@ -1,8 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom"
-import './App.css'
 import RegisterPage from "./pages/RegisterPage"
 import LoginPage from './pages/LoginPage'
 import LobbyPage from "./pages/LobbyPage"
+import RoomPage from "./pages/RoomPage"
 import RequireAuth from "./components/RequireAuth"
 
 function App() {
@@ -14,6 +14,7 @@ function App() {
       <Route path="/register" element={<RegisterPage />} />
       <Route element={<RequireAuth />}>
         <Route path="/lobby" element={<LobbyPage />} />
+        <Route path="/room/:roomId" element={<RoomPage />} />
       </Route>
     </Routes>
   )
