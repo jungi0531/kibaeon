@@ -43,8 +43,15 @@ public class UserController {
     }
 
     @GetMapping("/users/me")
-    public ResponseEntity<UserSummaryInfoResponse> getUserSummaryInfo(Authentication auth) {
+    public ResponseEntity<UserSummaryInfoResponse> getMyInfo(Authentication auth) {
         Long userId = Long.parseLong(auth.getName());
+        UserSummaryInfoResponse response = userService.getUserSummaryInfo(userId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<UserSummaryInfoResponse> getUserById(@PathVariable Long userId) {
         UserSummaryInfoResponse response = userService.getUserSummaryInfo(userId);
 
         return ResponseEntity.ok(response);

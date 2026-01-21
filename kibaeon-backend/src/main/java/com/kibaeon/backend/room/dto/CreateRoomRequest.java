@@ -6,6 +6,6 @@ import lombok.Data;
 public class CreateRoomRequest {
     private String roomName;
     private int maxPlayers = 2;
-    private boolean isPrivate = false;
+    private boolean privateRoom = false;
     private String password;
 }

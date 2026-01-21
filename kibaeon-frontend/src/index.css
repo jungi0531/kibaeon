@@ -2,26 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
-  세 가지 색상 테마 - 원하는 테마의 주석을 해제하고 나머지는 주석 처리하세요
-*/
-
-/* 테마 1: 끄투 스타일 (차분한 민트/틸) - 현재 적용 */
-
 :root {
-  --primary: #2DD4BF;        
-  --secondary: #14B8A6;      
-  --background: #F0F9FF;     
-  --point-yellow: #FBBF24; 
-  --point-orange: #F97316;  
-  --text-title: #0F172A;     
-  --text-body: #334155;     
-  --text-sub: #64748B;       
-  --text-placeholder: #94A3B8;
-  --error: #EF4444;
+  --primary: #D4A574;
+  --secondary: #B8956A;
+  --background: #F9F5EE;
+  --point-yellow: #E8B86D;
+  --point-orange: #D97757;
+  --text-title: #4A3F35;
+  --text-body: #5A4F45;
+  --text-sub: #8A7F75;
+  --text-placeholder: #B0A59B;
+  --error: #C85A54;
   --white: #FFFFFF;
-  --card-bg: #FFFFFF;
-  --sidebar-bg: #FFFFFF;
+  --card-bg: #FFFCF7;
+  --sidebar-bg: #EFE8DF;
 
   font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -31,64 +25,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}  
-
-
-
-/* 테마 2: 게임 느낌 (MS 블루 + 밝은 그린) */
-
-/* :root {
-  --primary: #0078D4;
-  --secondary: #106EBE;
-  --background: #F3F4F6;
-  --point-yellow: #10B981;
-  --point-orange: #F59E0B;
-  --text-title: #1E293B;
-  --text-body: #374151;
-  --text-sub: #6B7280;
-  --text-placeholder: #9CA3AF;
-  --error: #EF4444;
-  --white: #FFFFFF;
-  --card-bg: #FFFFFF;
-  --sidebar-bg: #F9FAFB;
-
-  font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-} */
-
-
-/* 테마 3: 모던 게임 (디스코드 스타일 퍼플 + 그린) */
-
-/* :root {
-  --primary: #5865F2;
-  --secondary: #4752C4;
-  --background: #F2F3F5;
-  --point-yellow: #57F287;
-  --point-orange: #FEE75C;
-  --text-title: #23272A;
-  --text-body: #2C2F33;
-  --text-sub: #747F8D;
-  --text-placeholder: #99AAB5;
-  --error: #ED4245;
-  --white: #FFFFFF;
-  --card-bg: #FFFFFF;
-  --sidebar-bg: #FFFFFF;
-
-  font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-} */
+}
 
 
 * {

@@ -19,14 +19,16 @@ public class Room implements Serializable {
     private String roomId;
     private String roomName;
     private String hostId;
+    private String hostNickname; // 방장 닉네임 추가
 
     private List<String> playerIds;
     private int maxPlayers;
 
+    private Map<String, String> playerNicknames;       // userId -> nickname
     private Map<String, Boolean> readyStatus;
     private Map<String, CharacterType> playerCharacters;
 
-    private boolean isPrivate;
+    private boolean privateRoom;
     private String password;
 
     private RoomStatus status;
@@ -35,18 +37,21 @@ public class Room implements Serializable {
     private LocalDateTime startedAt;
 
     // 방 만들기 생성자
-    public Room(String roomId, String roomName, String hostId, int maxPlayers, boolean isPrivate, String password) {
+    public Room(String roomId, String roomName, String hostId, String hostNickname, int maxPlayers, boolean privateRoom, String password) {
         this.roomId = roomId;
         this.roomName = roomName;
         this.hostId = hostId;
+        this.hostNickname = hostNickname;
         this.playerIds = new ArrayList<>();
         this.playerIds.add(hostId);
         this.maxPlayers = maxPlayers;
+        this.playerNicknames = new HashMap<>();
+        this.playerNicknames.put(hostId, hostNickname);
         this.readyStatus = new HashMap<>();
         this.readyStatus.put(hostId, false);
 
         this.playerCharacters = new HashMap<>();
-        this.isPrivate = isPrivate;
+        this.privateRoom = privateRoom;
         this.password = password;
         this.status = RoomStatus.WAITING;
         this.createdAt = LocalDateTime.now();
