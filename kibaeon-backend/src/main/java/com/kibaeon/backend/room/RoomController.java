@@ -1,6 +1,7 @@
 package com.kibaeon.backend.room;
 
 import com.kibaeon.backend.room.dto.CreateRoomRequest;
+import com.kibaeon.backend.room.dto.JoinRoomRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -38,11 +39,44 @@ public class RoomController {
     }
 
     // 방 삭제
+    // 이 기능은 방장이 방 폭파를 위한 기능 프론트에 구현은 하지 않았지만 우선 남겨둠.
     @DeleteMapping("/{roomId}")
     public ResponseEntity<Void> deleteRoom(@PathVariable String roomId, Authentication authentication) {
         String userId = authentication.getName();
         roomService.deleteRoom(roomId, userId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    // 방 입장
+    @PostMapping("/{roomId}/join")
+    public ResponseEntity<Room> joinRoom(@PathVariable String roomId, @RequestBody(required = false)JoinRoomRequest request, Authentication authentication) {
+        String userId = authentication.getName();
+        String password = request != null ? request.getPassword() : null;
+        Room room = roomService.joinRoom(roomId, userId, password);
+
+        return ResponseEntity.ok(room);
+    }
+
+    // 방 나가기
+    @PostMapping("/{roomId}/leave")
+    public ResponseEntity<Void> leaveRoom(@PathVariable String roomId, Authentication authentication) {
+        String userId = authentication.getName();
+        roomService.leaveRoom(roomId, userId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    // 현재 유저의 입장 방 조회
+    @GetMapping("/my-room")
+    public ResponseEntity<Room> getMyRoom(Authentication authentication) {
+        String userId = authentication.getName();
+        Room room = roomService.getMyRoom(userId);
+
+        if (room == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(room);
     }
 }
