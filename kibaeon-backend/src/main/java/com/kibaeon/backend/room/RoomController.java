@@ -80,11 +80,4 @@ public class RoomController {
 
         return ResponseEntity.ok(room);
     }
-
-    // 디버그용 테스트 엔드포인트
-    @GetMapping("/test")
-    public ResponseEntity<String> test(Authentication authentication) {
-        System.out.println("Test endpoint called by: " + authentication.getName());
-        return ResponseEntity.ok("Room API is working! User: " + authentication.getName());
-    }
 }
