@@ -1,6 +1,6 @@
 package com.kibaeon.backend.room;
 
-import com.kibaeon.backend.user.CharacterType;
+import com.kibaeon.backend.room.dto.RoomListResponse;
 import com.kibaeon.backend.user.User;
 import com.kibaeon.backend.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,13 +41,13 @@ public class RoomService {
             // UUID로 고유 방 id 만들기
             String roomId = UUID.randomUUID().toString();
 
-            // 방 객체 생성 후 JSON 변환
-            Room room = new Room(roomId, roomName, hostId, maxPlayers, isPrivate, password);
-
-            // 방장 정보 방에 추가
+            // 방장 정보 가져오기
             User host = userService.findById(Long.parseLong(hostId));
-            room.getPlayerIds().add(hostId);
-            room.getReadyStatus().put(hostId, false);
+
+            // 방 객체 생성 (생성자에서 이미 hostId를 playerIds에 추가함)
+            Room room = new Room(roomId, roomName, hostId, host.getNickname(), maxPlayers, isPrivate, password);
+
+            // 방장의 캐릭터 정보만 추가 (playerIds와 readyStatus는 생성자에서 이미 추가됨)
             room.getPlayerCharacters().put(hostId, host.getCharacterType());
 
             String roomJson = objectMapper.writeValueAsString(room);
@@ -62,8 +62,8 @@ public class RoomService {
         }
     }
 
-    // 방 목록 조회
-    public List<Room> getAllRooms() {
+    // 방 목록 조회 (비밀번호 제외)
+    public List<RoomListResponse> getAllRooms() {
         try {
             Set<String> keys = redisTemplate.keys(ROOM_KEY_PREFIX + "*");
 
@@ -75,7 +75,8 @@ public class RoomService {
                     .map(key -> {
                         try {
                             String roomJson = (String)redisTemplate.opsForValue().get(key);
-                            return objectMapper.readValue(roomJson, Room.class);
+                            Room room = objectMapper.readValue(roomJson, Room.class);
+                            return RoomListResponse.fromRoom(room);
                         } catch (Exception e) {
                             return null;
                         }
@@ -132,7 +133,7 @@ public class RoomService {
             if (room.isFull()) {
                 throw new RuntimeException("방이 가득 찼어요.");
             }
-            if (room.isPrivate()) {
+            if (room.isPrivateRoom()) {
                 if (password == null || !password.equals(room.getPassword())) {
                     throw new RuntimeException("비밀번호가 틀렸어요.");
                 }
@@ -140,12 +141,12 @@ public class RoomService {
 
             // 유저 정보 가져오기
             User user = userService.findById(Long.parseLong(userId));
-            CharacterType characterType = user.getCharacterType();
 
             // 방에 유저 정보 추가
             room.getPlayerIds().add(userId);
+            room.getPlayerNicknames().put(userId, user.getNickname());
             room.getReadyStatus().put(userId, false);
-            room.getPlayerCharacters().put(userId, characterType);
+            room.getPlayerCharacters().put(userId, user.getCharacterType());
 
             // 변경 정보 redis에 저장
             redisTemplate.opsForValue().set(key, objectMapper.writeValueAsString(room));
@@ -172,8 +173,12 @@ public class RoomService {
                 throw new RuntimeException("이 방에 입장해 있지 않아요.");
             }
 
+            // 나간 사람이 방장인지 먼저 확인
+            boolean wasHost = room.getHostId().equals(userId);
+
             // 유저 제거
             room.getPlayerIds().remove(userId);
+            room.getPlayerNicknames().remove(userId);
             room.getReadyStatus().remove(userId);
             room.getPlayerCharacters().remove(userId);
 
@@ -185,10 +190,12 @@ public class RoomService {
                 return;
             }
 
-            // 나간 사람이 방장이면 다음 사람에게 방장 위임
-            if (room.getHostId().equals(userId)) {
+            // 나간 사람이 방장이었다면 다음 사람에게 방장 위임
+            if (wasHost) {
                 String newHostId = room.getPlayerIds().get(0);
+                User newHost = userService.findById(Long.parseLong(newHostId));
                 room.transferHost(newHostId);
+                room.setHostNickname(newHost.getNickname());
             }
 
             // 방 정보 업데이트

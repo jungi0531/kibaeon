@@ -2,6 +2,7 @@ package com.kibaeon.backend.room;
 
 import com.kibaeon.backend.room.dto.CreateRoomRequest;
 import com.kibaeon.backend.room.dto.JoinRoomRequest;
+import com.kibaeon.backend.room.dto.RoomListResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,17 +25,17 @@ public class RoomController {
                 request.getRoomName(),
                 hostId,
                 request.getMaxPlayers(),
-                request.isPrivate(),
+                request.isPrivateRoom(),
                 request.getPassword()
         );
 
         return ResponseEntity.ok(room);
     }
 
-    // 방 목록 조회
+    // 방 목록 조회 (비밀번호 제외)
     @GetMapping
-    public ResponseEntity<List<Room>> getAllRooms() {
-        List<Room> rooms = roomService.getAllRooms();
+    public ResponseEntity<List<RoomListResponse>> getAllRooms() {
+        List<RoomListResponse> rooms = roomService.getAllRooms();
         return ResponseEntity.ok(rooms);
     }
 

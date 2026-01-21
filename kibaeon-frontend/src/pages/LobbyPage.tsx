@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../api/axios";
@@ -16,9 +16,10 @@ interface Room {
     roomId: string;
     roomName: string;
     hostId: string;
+    hostNickname: string;
     playerIds: string[];
     maxPlayers: number;
-    isPrivate: boolean;
+    privateRoom: boolean;
     status: "WAITING" | "PLAYING";
     createdAt: string;
 }
@@ -27,10 +28,13 @@ function LobbyPage() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+    const [passwordInput, setPasswordInput] = useState("");
     const [roomForm, setRoomForm] = useState({
         roomName: "",
         maxPlayers: 2,
-        isPrivate: false,
+        privateRoom: false,
         password: "",
     });
 
@@ -53,6 +57,33 @@ function LobbyPage() {
         },
     });
 
+    // 현재 유저가 입장한 방 확인 및 로비 진입 시 방 목록 새로고침
+    useEffect(() => {
+        const checkCurrentRoom = async () => {
+            try {
+                const res = await api.get("/api/rooms/my-room");
+                if (res.data && res.data.roomId) {
+                    // 이미 방에 있으면 해당 방으로 리다이렉트
+                    navigate(`/room/${res.data.roomId}`);
+                } else {
+                    // 방에 없으면 방 목록 새로고침
+                    refetchRooms();
+                }
+            } catch (error: any) {
+                // 404 에러는 정상 (방에 없음) - 방 목록 새로고침
+                if (error.response?.status === 404) {
+                    refetchRooms();
+                } else {
+                    console.error("현재 방 확인 실패:", error);
+                }
+            }
+        };
+
+        if (user) {
+            checkCurrentRoom();
+        }
+    }, [user, navigate, refetchRooms]);
+
     // 방 생성 mutation
     const createRoomMutation = useMutation({
         mutationFn: async (data: typeof roomForm) => {
@@ -65,7 +96,7 @@ function LobbyPage() {
             setRoomForm({
                 roomName: "",
                 maxPlayers: 2,
-                isPrivate: false,
+                privateRoom: false,
                 password: "",
             });
             // 방 생성 후 바로 해당 방으로 이동
@@ -88,6 +119,42 @@ function LobbyPage() {
             alert(error.response?.data?.message || "방 삭제에 실패했어요.");
         },
     });
+
+    // 방 입장 mutation
+    const joinRoomMutation = useMutation({
+        mutationFn: async ({ roomId, password }: { roomId: string; password?: string }) => {
+            return await api.post(`/api/rooms/${roomId}/join`, password ? { password } : {});
+        },
+        onSuccess: (_, variables) => {
+            navigate(`/room/${variables.roomId}`);
+        },
+        onError: (error: any) => {
+            alert(error.response?.data?.message || "방 입장에 실패했어요.");
+        },
+    });
+
+    // 방 입장 핸들러
+    const handleJoinRoom = (room: Room) => {
+        if (room.privateRoom) {
+            setSelectedRoom(room);
+            setShowPasswordModal(true);
+        } else {
+            joinRoomMutation.mutate({ roomId: room.roomId });
+        }
+    };
+
+    // 비밀번호로 방 입장
+    const handleJoinWithPassword = () => {
+        if (!selectedRoom) return;
+        if (!passwordInput.trim()) {
+            alert("비밀번호를 입력해주세요.");
+            return;
+        }
+        joinRoomMutation.mutate({ roomId: selectedRoom.roomId, password: passwordInput });
+        setShowPasswordModal(false);
+        setPasswordInput("");
+        setSelectedRoom(null);
+    };
 
     // 에러 처리
     if (error) {
@@ -122,7 +189,7 @@ function LobbyPage() {
         <div className="min-h-screen p-4" style={{ backgroundColor: 'var(--background)' }}>
             <div className="flex gap-4 h-[calc(100vh-2rem)]">
                 {/* 왼쪽 사이드바 - 유저 정보 */}
-                <div className="w-64 rounded-lg shadow-lg p-4 flex flex-col h-[70vh]" style={{ backgroundColor: 'var(--sidebar-bg)' }}>
+                <div className="w-64 rounded-lg shadow-lg p-4 flex flex-col h-full" style={{ backgroundColor: 'var(--sidebar-bg)' }}>
                     {/* 유저 프로필 */}
                     <div className="flex flex-col items-center mb-4">
                         <div className="scale-75">
@@ -144,14 +211,14 @@ function LobbyPage() {
 
                         <div className="rounded-lg p-3" style={{ backgroundColor: 'var(--background)' }}>
                             <p className="text-xs mb-1" style={{ color: 'var(--text-sub)' }}>승수</p>
-                            <p className="text-xl font-bold" style={{ color: 'var(--primary)' }}>
+                            <p className="text-xl font-bold" style={{ color: 'var(--text-title)' }}>
                                 {user.winCount}
                             </p>
                         </div>
 
                         <div className="rounded-lg p-3" style={{ backgroundColor: 'var(--background)' }}>
                             <p className="text-xs mb-1" style={{ color: 'var(--text-sub)' }}>승률</p>
-                            <p className="text-xl font-bold" style={{ color: 'var(--point-yellow)' }}>
+                            <p className="text-xl font-bold" style={{ color: 'var(--text-title)' }}>
                                 {user.winRate}%
                             </p>
                         </div>
@@ -218,19 +285,18 @@ function LobbyPage() {
                                             <h3 className="text-lg font-bold flex-1 truncate" style={{ color: 'var(--text-title)' }}>
                                                 {room.roomName}
                                             </h3>
-                                            {room.isPrivate && (
-                                                <span className="text-xs px-2 py-1 rounded" style={{ backgroundColor: 'var(--point-orange)', color: 'white' }}>
-                                                    🔒
-                                                </span>
-                                            )}
+                                            {room.privateRoom && <span className="text-lg">🔒</span>}
                                         </div>
 
-                                        <div className="flex gap-3 mb-2 text-sm" style={{ color: 'var(--text-sub)' }}>
-                                            <span>👥 {room.playerIds.length}/{room.maxPlayers}</span>
-                                            <span>{room.status === 'WAITING' ? '⏳ 대기중' : '🎮 게임중'}</span>
+                                        <div className="flex flex-col gap-1 mb-2 text-sm" style={{ color: 'var(--text-sub)' }}>
+                                            <div className="flex gap-3">
+                                                <span>👥 {room.playerIds.length}/{room.maxPlayers}</span>
+                                                <span>{room.status === 'WAITING' ? '⏳ 대기중' : '🎮 게임중'}</span>
+                                            </div>
+                                            <span className="text-xs">👑 {room.hostNickname}</span>
                                         </div>
 
-                                        {room.hostId === user?.nickname && (
+                                        {room.hostNickname === user?.nickname && (
                                             <button
                                                 onClick={() => {
                                                     if (confirm('정말 방을 삭제하시겠어요?')) {
@@ -248,20 +314,96 @@ function LobbyPage() {
                                     </div>
 
                                     <button
-                                        onClick={() => navigate(`/room/${room.roomId}`)}
+                                        onClick={() => handleJoinRoom(room)}
                                         className="w-24 flex items-center justify-center font-bold text-white transition-opacity"
                                         style={{ backgroundColor: 'var(--primary)' }}
                                         onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
                                         onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-                                        disabled={room.status === 'PLAYING'}
+                                        disabled={room.status === 'PLAYING' || joinRoomMutation.isPending}
                                     >
-                                        입장
+                                        {joinRoomMutation.isPending ? '입장 중...' : '입장'}
                                     </button>
                                 </div>
                             ))}
                         </div>
                     )}
                 </div>
+
+                {/* 비밀번호 입력 모달 */}
+                {showPasswordModal && (
+                    <div
+                        className="fixed inset-0 flex items-center justify-center p-4 z-50"
+                        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+                        onClick={() => {
+                            setShowPasswordModal(false);
+                            setPasswordInput("");
+                            setSelectedRoom(null);
+                        }}
+                    >
+                        <div
+                            className="rounded-lg shadow-xl p-6 w-full max-w-sm"
+                            style={{ backgroundColor: 'var(--card-bg)' }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--text-title)' }}>
+                                🔒 비밀번호 입력
+                            </h2>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-semibold mb-1" style={{ color: 'var(--text-title)' }}>
+                                        방 이름: {selectedRoom?.roomName}
+                                    </label>
+                                    <input
+                                        className="w-full px-4 py-2 rounded-lg border-2 transition-colors outline-none"
+                                        style={{
+                                            borderColor: 'var(--text-placeholder)',
+                                            color: 'var(--text-body)'
+                                        }}
+                                        onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                                        onBlur={(e) => e.target.style.borderColor = 'var(--text-placeholder)'}
+                                        type="password"
+                                        placeholder="비밀번호를 입력하세요"
+                                        value={passwordInput}
+                                        onChange={(e) => setPasswordInput(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleJoinWithPassword();
+                                            }
+                                        }}
+                                        autoFocus
+                                    />
+                                </div>
+
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => {
+                                            setShowPasswordModal(false);
+                                            setPasswordInput("");
+                                            setSelectedRoom(null);
+                                        }}
+                                        className="flex-1 py-2 rounded-lg font-semibold transition-opacity"
+                                        style={{ backgroundColor: 'var(--text-sub)', color: 'white' }}
+                                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+                                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                    >
+                                        취소
+                                    </button>
+                                    <button
+                                        onClick={handleJoinWithPassword}
+                                        className="flex-1 py-2 rounded-lg font-semibold text-white transition-opacity"
+                                        style={{ backgroundColor: 'var(--primary)' }}
+                                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+                                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                        disabled={joinRoomMutation.isPending}
+                                    >
+                                        {joinRoomMutation.isPending ? '입장 중...' : '입장'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* 방 만들기 모달 */}
                 {showCreateModal && (
@@ -324,8 +466,8 @@ function LobbyPage() {
                                     <label className="flex items-center gap-2 cursor-pointer">
                                         <input
                                             type="checkbox"
-                                            checked={roomForm.isPrivate}
-                                            onChange={(e) => setRoomForm({ ...roomForm, isPrivate: e.target.checked })}
+                                            checked={roomForm.privateRoom}
+                                            onChange={(e) => setRoomForm({ ...roomForm, privateRoom: e.target.checked })}
                                             className="w-4 h-4"
                                         />
                                         <span className="text-sm font-semibold" style={{ color: 'var(--text-title)' }}>
@@ -334,7 +476,7 @@ function LobbyPage() {
                                     </label>
                                 </div>
 
-                                {roomForm.isPrivate && (
+                                {roomForm.privateRoom && (
                                     <div>
                                         <label className="block text-sm font-semibold mb-1" style={{ color: 'var(--text-title)' }}>
                                             비밀번호
@@ -371,7 +513,7 @@ function LobbyPage() {
                                                 alert('방 이름을 입력해주세요.');
                                                 return;
                                             }
-                                            if (roomForm.isPrivate && !roomForm.password.trim()) {
+                                            if (roomForm.privateRoom && !roomForm.password.trim()) {
                                                 alert('비밀번호를 입력해주세요.');
                                                 return;
                                             }
