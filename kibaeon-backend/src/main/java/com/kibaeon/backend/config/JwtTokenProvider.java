@@ -39,6 +39,8 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
+            System.err.println("JWT 검증 실패: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
