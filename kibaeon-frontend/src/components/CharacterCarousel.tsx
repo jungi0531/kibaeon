@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import CharacterDisplay from './CharacterDisplay';
 import { CHARACTER_TYPES } from '../constants/character';
 import KeycapButton from './KeycapButton';
