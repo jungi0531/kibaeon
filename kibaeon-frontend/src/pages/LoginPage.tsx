@@ -3,6 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import api from "../api/axios";
 import axios from "axios";
+import KeycapButton from "../components/KeycapButton";
+import SettingsButton from "../components/SettingsButton";
 
 interface LoginRequest {
     email: string;
@@ -44,23 +46,23 @@ function LoginPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--background)' }}>
+            <SettingsButton />
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold" style={{ color: 'var(--primary)' }}>KIBAEON</h1>
+                    <h1 className="text-4xl font-bold logo-text" style={{ color: 'var(--primary)' }}>KIBAEON</h1>
                 </div>
 
-                <div className="rounded-lg shadow-xl p-8" style={{ backgroundColor: 'var(--card-bg)' }}>
+                <div className="rounded-lg shadow-xl p-8 keycap-card" style={{ backgroundColor: 'var(--card-bg)' }}>
                     <h2 className="text-2xl font-bold mb-6 text-center" style={{ color: 'var(--text-title)' }}>로그인</h2>
 
                     <form className="space-y-4" onSubmit={handleLoginSubmit}>
                         <input
-                            className="w-full px-4 py-3 rounded-lg border-2 transition-colors outline-none"
+                            className="w-full px-4 py-3 rounded-lg keycap-input transition-colors outline-none"
                             style={{
-                                borderColor: 'var(--text-placeholder)',
-                                color: 'var(--text-body)'
+                                borderColor: '#4A3F35',
+                                color: 'var(--text-body)',
+                                backgroundColor: '#FFFCF7'
                             }}
-                            onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                            onBlur={(e) => e.target.style.borderColor = 'var(--text-placeholder)'}
                             type="email"
                             placeholder="이메일 입력"
                             value={email}
@@ -69,13 +71,12 @@ function LoginPage() {
                         />
 
                         <input
-                            className="w-full px-4 py-3 rounded-lg border-2 transition-colors outline-none"
+                            className="w-full px-4 py-3 rounded-lg keycap-input transition-colors outline-none"
                             style={{
-                                borderColor: 'var(--text-placeholder)',
-                                color: 'var(--text-body)'
+                                borderColor: '#4A3F35',
+                                color: 'var(--text-body)',
+                                backgroundColor: '#FFFCF7'
                             }}
-                            onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                            onBlur={(e) => e.target.style.borderColor = 'var(--text-placeholder)'}
                             type="password"
                             placeholder="비밀번호 입력"
                             value={password}
@@ -89,16 +90,16 @@ function LoginPage() {
                             </p>
                         )}
 
-                        <button
-                            className="w-full py-3 rounded-lg font-semibold text-white transition-opacity"
-                            style={{ backgroundColor: 'var(--primary)' }}
-                            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                        <KeycapButton
+                            className="w-full"
+                            variant="primary"
+                            size="lg"
                             type="submit"
                             disabled={loginMutation.isPending}
+                            worn={true}
                         >
                             {loginMutation.isPending ? '로그인 중...' : '로그인'}
-                        </button>
+                        </KeycapButton>
                     </form>
 
                     <div className="mt-6 text-center">

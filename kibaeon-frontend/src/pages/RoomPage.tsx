@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import api from "../api/axios";
 import CharacterDisplay from "../components/CharacterDisplay";
+import KeycapButton from "../components/KeycapButton";
+import SettingsButton from "../components/SettingsButton";
 
 interface UserSummaryInfo {
     nickname: string;
@@ -111,12 +113,13 @@ function RoomPage() {
 
     return (
         <div className="min-h-screen p-4" style={{ backgroundColor: 'var(--background)' }}>
+            <SettingsButton />
             <div className="max-w-6xl mx-auto">
                 <div className="text-center mb-6">
-                    <h1 className="text-4xl font-bold" style={{ color: 'var(--primary)' }}>KIBAEON</h1>
+                    <h1 className="text-4xl font-bold logo-text" style={{ color: 'var(--primary)' }}>KIBAEON</h1>
                 </div>
 
-                <div className="rounded-lg shadow-xl p-6" style={{ backgroundColor: 'var(--card-bg)' }}>
+                <div className="rounded-lg shadow-xl p-6 keycap-card" style={{ backgroundColor: 'var(--card-bg)' }}>
                     <div className="flex justify-between items-center mb-6">
                         <div>
                             <div className="flex items-center gap-2">
@@ -129,55 +132,51 @@ function RoomPage() {
                                 방장: {currentRoom.hostNickname} | {currentRoom.playerIds.length}/{currentRoom.maxPlayers}명
                             </p>
                         </div>
-                        <button
+                        <KeycapButton
                             onClick={handleLeaveRoom}
-                            className="px-4 py-2 rounded-lg font-semibold text-white transition-opacity"
-                            style={{ backgroundColor: 'var(--error)' }}
-                            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                            variant="danger"
+                            size="md"
                             disabled={leaveRoomMutation.isPending}
                         >
                             {leaveRoomMutation.isPending ? '나가는 중...' : '나가기'}
-                        </button>
+                        </KeycapButton>
                     </div>
 
                     {/* 플레이어 목록 */}
                     <div className="mb-6">
                         <h3 className="text-lg font-bold mb-3" style={{ color: 'var(--text-title)' }}>참가자</h3>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className={`grid gap-4 ${currentRoom.playerIds.length <= 2 ? 'grid-cols-2' : currentRoom.playerIds.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
                             {currentRoom.playerIds.map((playerId) => (
                                 <div
                                     key={playerId}
-                                    className="rounded-lg p-3 flex items-center justify-between cursor-pointer transition-opacity"
-                                    style={{ backgroundColor: 'var(--background)' }}
+                                    className="rounded-lg p-4 flex flex-col items-center cursor-pointer transition-opacity keycap-card"
+                                    style={{ backgroundColor: 'var(--card-bg)' }}
                                     onClick={() => setSelectedPlayerId(playerId)}
                                     onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
                                     onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                                 >
-                                    <div className="flex items-center gap-2">
-                                        <span style={{ color: 'var(--text-title)' }}>
+                                    {/* 캐릭터 이미지 */}
+                                    <div className="mb-2 scale-75">
+                                        <CharacterDisplay characterType={currentRoom.playerCharacters?.[playerId] || 'KEYCAP_01'} />
+                                    </div>
+
+                                    {/* 닉네임 */}
+                                    <div className="text-center mb-1">
+                                        <span className="text-sm font-bold" style={{ color: 'var(--text-title)' }}>
                                             {playerId === currentRoom.hostId && '👑 '}
-                                            {currentRoom.playerNicknames?.[playerId] || playerId}
-                                        </span>
-                                        <span className="text-xs" style={{ color: 'var(--text-sub)' }}>
-                                            ({currentRoom.playerCharacters?.[playerId] || '?'})
+                                            {currentRoom.playerNicknames?.[playerId] || '???'}
                                         </span>
                                     </div>
-                                    <span className="text-sm">
-                                        {currentRoom.readyStatus[playerId] ? '✅' : '⏳'}
-                                    </span>
+
+                                    {/* 준비 상태 */}
+                                    <div className="text-xs font-semibold" style={{
+                                        color: currentRoom.readyStatus[playerId] ? '#4A8B4A' : '#D97757'
+                                    }}>
+                                        {currentRoom.readyStatus[playerId] ? '준비 완료' : '대기 중'}
+                                    </div>
                                 </div>
                             ))}
                         </div>
-                    </div>
-
-                    <div className="text-center py-10">
-                        <p className="text-lg" style={{ color: 'var(--text-sub)' }}>
-                            Ready 버튼과 채팅 기능은 웹소켓 구현 후 추가될 예정이에요!
-                        </p>
-                        <p className="text-sm mt-2" style={{ color: 'var(--text-placeholder)' }}>
-                            (현재는 새로고침 시에만 방 정보가 업데이트됩니다)
-                        </p>
                     </div>
                 </div>
 
@@ -189,7 +188,7 @@ function RoomPage() {
                         onClick={() => setSelectedPlayerId(null)}
                     >
                         <div
-                            className="rounded-lg shadow-xl p-6 w-full max-w-sm"
+                            className="rounded-lg shadow-xl p-6 w-full max-w-sm keycap-modal"
                             style={{ backgroundColor: 'var(--card-bg)' }}
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -211,28 +210,27 @@ function RoomPage() {
 
                                     <div className="rounded-lg p-3" style={{ backgroundColor: 'var(--background)' }}>
                                         <p className="text-xs mb-1" style={{ color: 'var(--text-sub)' }}>승수</p>
-                                        <p className="text-xl font-bold" style={{ color: 'var(--primary)' }}>
+                                        <p className="text-xl font-bold" style={{ color: 'var(--text-title)' }}>
                                             {playerDetail.winCount}
                                         </p>
                                     </div>
 
                                     <div className="rounded-lg p-3" style={{ backgroundColor: 'var(--background)' }}>
                                         <p className="text-xs mb-1" style={{ color: 'var(--text-sub)' }}>승률</p>
-                                        <p className="text-xl font-bold" style={{ color: 'var(--point-yellow)' }}>
+                                        <p className="text-xl font-bold" style={{ color: 'var(--text-title)' }}>
                                             {playerDetail.winRate}%
                                         </p>
                                     </div>
                                 </div>
 
-                                <button
+                                <KeycapButton
                                     onClick={() => setSelectedPlayerId(null)}
-                                    className="mt-4 w-full py-2 rounded-lg font-semibold text-white transition-opacity"
-                                    style={{ backgroundColor: 'var(--primary)' }}
-                                    onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                                    onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                    className="mt-4 w-full"
+                                    variant="primary"
+                                    size="md"
                                 >
                                     닫기
-                                </button>
+                                </KeycapButton>
                             </div>
                         </div>
                     </div>

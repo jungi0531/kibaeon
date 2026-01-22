@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import api from "../api/axios";
-import CharacterDisplay from "../components/CharacterDisplay";
-import { CHARACTER_TYPES } from "../constants/character";
+import CharacterCarousel from "../components/CharacterCarousel";
+import KeycapButton from "../components/KeycapButton";
+import SettingsButton from "../components/SettingsButton";
 
 interface RegisterRequest {
     email: string;
@@ -128,25 +129,24 @@ function RegisterPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--background)' }}>
+            <SettingsButton />
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold" style={{ color: 'var(--primary)' }}>KIBAEON</h1>
+                    <h1 className="text-4xl font-bold logo-text" style={{ color: 'var(--primary)' }}>KIBAEON</h1>
                 </div>
 
-                <div className="rounded-lg shadow-xl p-8" style={{ backgroundColor: 'var(--card-bg)' }}>
+                <div className="rounded-lg shadow-xl p-8 keycap-card" style={{ backgroundColor: 'var(--card-bg)' }}>
                     <h2 className="text-2xl font-bold mb-6 text-center" style={{ color: 'var(--text-title)' }}>회원가입</h2>
 
                     <form className="space-y-4" onSubmit={handleRegister}>
                         <div>
                             <div className="flex gap-2">
                                 <input
-                                    className="flex-1 px-4 py-3 rounded-lg border-2 transition-colors outline-none"
+                                    className="flex-1 px-4 py-3 rounded-lg keycap-input outline-none"
                                     style={{
-                                        borderColor: errors.email ? 'var(--error)' : 'var(--text-placeholder)',
+                                        borderColor: errors.email ? 'var(--error)' : undefined,
                                         color: 'var(--text-body)'
                                     }}
-                                    onFocus={(e) => !errors.email && (e.target.style.borderColor = 'var(--primary)')}
-                                    onBlur={(e) => !errors.email && (e.target.style.borderColor = 'var(--text-placeholder)')}
                                     type="email"
                                     name="email"
                                     placeholder="이메일"
@@ -158,16 +158,14 @@ function RegisterPage() {
                                     }}
                                     required
                                 />
-                                <button
+                                <KeycapButton
                                     type="button"
-                                    className="px-4 py-3 rounded-lg font-bold text-white transition-opacity"
-                                    style={{ backgroundColor: 'var(--secondary)' }}
-                                    onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                                    onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                    variant="secondary"
+                                    size="md"
                                     onClick={handleCheckEmail}
                                 >
                                     ✓
-                                </button>
+                                </KeycapButton>
                             </div>
                             {emailCheckMsg && (
                                 <p className="text-sm mt-1" style={{ color: isEmailChecked ? 'var(--primary)' : 'var(--error)' }}>
@@ -178,13 +176,11 @@ function RegisterPage() {
 
                         <div>
                             <input
-                                className="w-full px-4 py-3 rounded-lg border-2 transition-colors outline-none"
+                                className="w-full px-4 py-3 rounded-lg keycap-input outline-none"
                                 style={{
-                                    borderColor: errors.password ? 'var(--error)' : 'var(--text-placeholder)',
+                                    borderColor: errors.password ? 'var(--error)' : undefined,
                                     color: 'var(--text-body)'
                                 }}
-                                onFocus={(e) => !errors.password && (e.target.style.borderColor = 'var(--primary)')}
-                                onBlur={(e) => !errors.password && (e.target.style.borderColor = 'var(--text-placeholder)')}
                                 type="password"
                                 name="password"
                                 placeholder="비밀번호 (8~20자)"
@@ -197,13 +193,11 @@ function RegisterPage() {
 
                         <div>
                             <input
-                                className="w-full px-4 py-3 rounded-lg border-2 transition-colors outline-none"
+                                className="w-full px-4 py-3 rounded-lg keycap-input outline-none"
                                 style={{
-                                    borderColor: errors.confirmPassword ? 'var(--error)' : 'var(--text-placeholder)',
+                                    borderColor: errors.confirmPassword ? 'var(--error)' : undefined,
                                     color: 'var(--text-body)'
                                 }}
-                                onFocus={(e) => !errors.confirmPassword && (e.target.style.borderColor = 'var(--primary)')}
-                                onBlur={(e) => !errors.confirmPassword && (e.target.style.borderColor = 'var(--text-placeholder)')}
                                 type="password"
                                 name="confirmPassword"
                                 placeholder="비밀번호 확인"
@@ -216,13 +210,11 @@ function RegisterPage() {
 
                         <div>
                             <input
-                                className="w-full px-4 py-3 rounded-lg border-2 transition-colors outline-none"
+                                className="w-full px-4 py-3 rounded-lg keycap-input outline-none"
                                 style={{
-                                    borderColor: errors.nickname ? 'var(--error)' : 'var(--text-placeholder)',
+                                    borderColor: errors.nickname ? 'var(--error)' : undefined,
                                     color: 'var(--text-body)'
                                 }}
-                                onFocus={(e) => !errors.nickname && (e.target.style.borderColor = 'var(--primary)')}
-                                onBlur={(e) => !errors.nickname && (e.target.style.borderColor = 'var(--text-placeholder)')}
                                 type="text"
                                 name="nickname"
                                 placeholder="닉네임 (2~10자)"
@@ -233,31 +225,10 @@ function RegisterPage() {
                             {errors.nickname && <p className="text-sm mt-1" style={{ color: 'var(--error)' }}>{errors.nickname}</p>}
                         </div>
 
-                        <div className="space-y-3">
-                            <label className="block text-sm font-semibold" style={{ color: 'var(--text-title)' }}>캐릭터 선택</label>
-                            <select
-                                className="w-full px-4 py-3 rounded-lg border-2 transition-colors outline-none"
-                                style={{
-                                    borderColor: 'var(--text-placeholder)',
-                                    color: 'var(--text-body)'
-                                }}
-                                onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                                onBlur={(e) => e.target.style.borderColor = 'var(--text-placeholder)'}
-                                name="characterType"
-                                value={form.characterType}
-                                onChange={handleChange}
-                            >
-                                {CHARACTER_TYPES.map((c) => (
-                                    <option key={c.value} value={c.value}>
-                                        {c.label}
-                                    </option>
-                                ))}
-                            </select>
-
-                            <div className="flex justify-center">
-                                <CharacterDisplay characterType={form.characterType} />
-                            </div>
-                        </div>
+                        <CharacterCarousel
+                            selectedCharacter={form.characterType}
+                            onCharacterChange={(characterType) => setForm({ ...form, characterType })}
+                        />
 
                         {errors.server && (
                             <p className="text-sm text-center p-2 rounded" style={{ color: 'var(--error)', backgroundColor: 'var(--background)' }}>
@@ -265,16 +236,16 @@ function RegisterPage() {
                             </p>
                         )}
 
-                        <button
-                            className="w-full py-3 rounded-lg font-semibold text-white transition-opacity"
-                            style={{ backgroundColor: 'var(--primary)' }}
-                            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                        <KeycapButton
+                            className="w-full"
+                            variant="primary"
+                            size="lg"
                             type="submit"
                             disabled={registerMutation.isPending}
+                            worn={true}
                         >
                             {registerMutation.isPending ? '회원가입 중...' : '회원가입'}
-                        </button>
+                        </KeycapButton>
                     </form>
 
                     <div className="mt-6 text-center">

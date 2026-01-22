@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../api/axios";
 import CharacterDisplay from "../components/CharacterDisplay";
+import KeycapButton from "../components/KeycapButton";
+import SettingsButton from "../components/SettingsButton";
+import LoadingKeycaps from "../components/LoadingKeycaps";
 
 interface UserSummaryInfo {
     nickname: string;
@@ -107,19 +110,6 @@ function LobbyPage() {
         },
     });
 
-    // 방 삭제 mutation
-    const deleteRoomMutation = useMutation({
-        mutationFn: async (roomId: string) => {
-            return await api.delete(`/api/rooms/${roomId}`);
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['rooms'] });
-        },
-        onError: (error: any) => {
-            alert(error.response?.data?.message || "방 삭제에 실패했어요.");
-        },
-    });
-
     // 방 입장 mutation
     const joinRoomMutation = useMutation({
         mutationFn: async ({ roomId, password }: { roomId: string; password?: string }) => {
@@ -187,9 +177,10 @@ function LobbyPage() {
 
     return (
         <div className="min-h-screen p-4" style={{ backgroundColor: 'var(--background)' }}>
+            <SettingsButton />
             <div className="flex gap-4 h-[calc(100vh-2rem)]">
                 {/* 왼쪽 사이드바 - 유저 정보 */}
-                <div className="w-64 rounded-lg shadow-lg p-4 flex flex-col h-full" style={{ backgroundColor: 'var(--sidebar-bg)' }}>
+                <div className="w-64 rounded-lg shadow-lg p-4 flex flex-col h-full keycap-card" style={{ backgroundColor: 'var(--sidebar-bg)' }}>
                     {/* 유저 프로필 */}
                     <div className="flex flex-col items-center mb-4">
                         <div className="scale-75">
@@ -225,59 +216,52 @@ function LobbyPage() {
                     </div>
 
                     {/* 로그아웃 버튼 */}
-                    <button
+                    <KeycapButton
                         onClick={handleLogout}
-                        className="w-full mt-4 px-4 py-2 text-white rounded-lg transition-colors font-semibold text-sm"
-                        style={{ backgroundColor: 'var(--point-orange)' }}
-                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                        className="w-full mt-4"
+                        variant="danger"
+                        size="sm"
                     >
                         로그아웃
-                    </button>
+                    </KeycapButton>
                 </div>
 
                 {/* 오른쪽 메인 영역 */}
                 <div className="flex-1 overflow-auto">
                     {/* 로고 및 버튼 */}
                     <div className="text-center mb-6">
-                        <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--primary)' }}>KIBAEON</h1>
+                        <h1 className="text-4xl font-bold logo-text mb-4" style={{ color: 'var(--primary)' }}>KIBAEON</h1>
                         <div className="flex justify-center gap-2">
-                            <button
+                            <KeycapButton
                                 onClick={() => refetchRooms()}
-                                className="px-4 py-2 rounded-lg font-semibold transition-opacity"
-                                style={{ backgroundColor: 'var(--secondary)', color: 'white' }}
-                                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                variant="secondary"
+                                size="md"
                                 disabled={roomsLoading}
                             >
                                 🔄 새로고침
-                            </button>
-                            <button
+                            </KeycapButton>
+                            <KeycapButton
                                 onClick={() => setShowCreateModal(true)}
-                                className="px-6 py-2 rounded-lg font-semibold text-white transition-opacity"
-                                style={{ backgroundColor: 'var(--primary)' }}
-                                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                variant="primary"
+                                size="md"
                             >
                                 방 만들기
-                            </button>
+                            </KeycapButton>
                         </div>
                     </div>
 
                     {roomsLoading ? (
-                        <div className="text-center py-8" style={{ color: 'var(--text-sub)' }}>
-                            로딩 중...
-                        </div>
+                        <LoadingKeycaps text="방 목록 불러오는 중" />
                     ) : rooms.length === 0 ? (
-                        <div className="rounded-lg shadow-md p-6 text-center" style={{ backgroundColor: 'var(--card-bg)' }}>
-                            <p style={{ color: 'var(--text-sub)' }}>아직 생성된 방이 없어요. 첫 번째 방을 만들어보세요!</p>
+                        <div className="rounded-lg shadow-md p-6 text-center keycap-card" style={{ backgroundColor: 'var(--card-bg)' }}>
+                            <p className="font-bold" style={{ color: 'var(--text-sub)' }}>아직 생성된 방이 없어요</p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 gap-4">
                             {[...rooms].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((room) => (
                                 <div
                                     key={room.roomId}
-                                    className="rounded-lg shadow-md flex overflow-hidden"
+                                    className="rounded-lg shadow-md flex overflow-hidden keycap-card"
                                     style={{ backgroundColor: 'var(--card-bg)', height: '120px' }}
                                 >
                                     <div className="flex-1 p-4 flex flex-col">
@@ -296,33 +280,19 @@ function LobbyPage() {
                                             <span className="text-xs">👑 {room.hostNickname}</span>
                                         </div>
 
-                                        {room.hostNickname === user?.nickname && (
-                                            <button
-                                                onClick={() => {
-                                                    if (confirm('정말 방을 삭제하시겠어요?')) {
-                                                        deleteRoomMutation.mutate(room.roomId);
-                                                    }
-                                                }}
-                                                className="mt-auto py-1 rounded-lg font-semibold text-white transition-opacity text-sm"
-                                                style={{ backgroundColor: 'var(--error)' }}
-                                                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                                                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-                                            >
-                                                삭제
-                                            </button>
-                                        )}
+                                        {/* 방 삭제 버튼 제거 - 방장이 나가면 자동으로 방이 삭제됨 */}
                                     </div>
 
-                                    <button
+                                    <KeycapButton
                                         onClick={() => handleJoinRoom(room)}
-                                        className="w-24 flex items-center justify-center font-bold text-white transition-opacity"
-                                        style={{ backgroundColor: 'var(--primary)' }}
-                                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                        className="w-24 flex items-center justify-center"
+                                        variant="primary"
+                                        size="md"
                                         disabled={room.status === 'PLAYING' || joinRoomMutation.isPending}
+                                        worn={true}
                                     >
                                         {joinRoomMutation.isPending ? '입장 중...' : '입장'}
-                                    </button>
+                                    </KeycapButton>
                                 </div>
                             ))}
                         </div>
@@ -341,7 +311,7 @@ function LobbyPage() {
                         }}
                     >
                         <div
-                            className="rounded-lg shadow-xl p-6 w-full max-w-sm"
+                            className="rounded-lg shadow-xl p-6 w-full max-w-sm keycap-modal"
                             style={{ backgroundColor: 'var(--card-bg)' }}
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -355,13 +325,7 @@ function LobbyPage() {
                                         방 이름: {selectedRoom?.roomName}
                                     </label>
                                     <input
-                                        className="w-full px-4 py-2 rounded-lg border-2 transition-colors outline-none"
-                                        style={{
-                                            borderColor: 'var(--text-placeholder)',
-                                            color: 'var(--text-body)'
-                                        }}
-                                        onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                                        onBlur={(e) => e.target.style.borderColor = 'var(--text-placeholder)'}
+                                        className="w-full px-4 py-2 rounded-lg keycap-input outline-none"
                                         type="password"
                                         placeholder="비밀번호를 입력하세요"
                                         value={passwordInput}
@@ -376,29 +340,27 @@ function LobbyPage() {
                                 </div>
 
                                 <div className="flex gap-2">
-                                    <button
+                                    <KeycapButton
                                         onClick={() => {
                                             setShowPasswordModal(false);
                                             setPasswordInput("");
                                             setSelectedRoom(null);
                                         }}
-                                        className="flex-1 py-2 rounded-lg font-semibold transition-opacity"
-                                        style={{ backgroundColor: 'var(--text-sub)', color: 'white' }}
-                                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                        className="flex-1"
+                                        variant="neutral"
+                                        size="md"
                                     >
                                         취소
-                                    </button>
-                                    <button
+                                    </KeycapButton>
+                                    <KeycapButton
                                         onClick={handleJoinWithPassword}
-                                        className="flex-1 py-2 rounded-lg font-semibold text-white transition-opacity"
-                                        style={{ backgroundColor: 'var(--primary)' }}
-                                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                        className="flex-1"
+                                        variant="primary"
+                                        size="md"
                                         disabled={joinRoomMutation.isPending}
                                     >
                                         {joinRoomMutation.isPending ? '입장 중...' : '입장'}
-                                    </button>
+                                    </KeycapButton>
                                 </div>
                             </div>
                         </div>
@@ -413,7 +375,7 @@ function LobbyPage() {
                         onClick={() => setShowCreateModal(false)}
                     >
                         <div
-                            className="rounded-lg shadow-xl p-6 w-full max-w-md"
+                            className="rounded-lg shadow-xl p-6 w-full max-w-md keycap-modal"
                             style={{ backgroundColor: 'var(--card-bg)' }}
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -425,13 +387,7 @@ function LobbyPage() {
                                         방 이름
                                     </label>
                                     <input
-                                        className="w-full px-4 py-2 rounded-lg border-2 transition-colors outline-none"
-                                        style={{
-                                            borderColor: 'var(--text-placeholder)',
-                                            color: 'var(--text-body)'
-                                        }}
-                                        onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                                        onBlur={(e) => e.target.style.borderColor = 'var(--text-placeholder)'}
+                                        className="w-full px-4 py-2 rounded-lg keycap-input outline-none"
                                         type="text"
                                         placeholder="방 이름을 입력하세요"
                                         value={roomForm.roomName}
@@ -440,26 +396,23 @@ function LobbyPage() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-semibold mb-1" style={{ color: 'var(--text-title)' }}>
+                                    <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-title)' }}>
                                         최대 인원
                                     </label>
-                                    <select
-                                        className="w-full px-4 py-2 rounded-lg border-2 transition-colors outline-none"
-                                        style={{
-                                            borderColor: 'var(--text-placeholder)',
-                                            color: 'var(--text-body)'
-                                        }}
-                                        onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                                        onBlur={(e) => e.target.style.borderColor = 'var(--text-placeholder)'}
-                                        value={roomForm.maxPlayers}
-                                        onChange={(e) => setRoomForm({ ...roomForm, maxPlayers: Number(e.target.value) })}
-                                    >
-                                        <option value={2}>2명</option>
-                                        <option value={3}>3명</option>
-                                        <option value={4}>4명</option>
-                                        <option value={6}>6명</option>
-                                        <option value={8}>8명</option>
-                                    </select>
+                                    <div className="flex gap-2">
+                                        {[2, 3, 4, 5, 6].map((num) => (
+                                            <KeycapButton
+                                                key={num}
+                                                type="button"
+                                                variant={roomForm.maxPlayers === num ? 'primary' : 'secondary'}
+                                                size="sm"
+                                                onClick={() => setRoomForm({ ...roomForm, maxPlayers: num })}
+                                                className="flex-1"
+                                            >
+                                                {num}명
+                                            </KeycapButton>
+                                        ))}
+                                    </div>
                                 </div>
 
                                 <div>
@@ -482,13 +435,7 @@ function LobbyPage() {
                                             비밀번호
                                         </label>
                                         <input
-                                            className="w-full px-4 py-2 rounded-lg border-2 transition-colors outline-none"
-                                            style={{
-                                                borderColor: 'var(--text-placeholder)',
-                                                color: 'var(--text-body)'
-                                            }}
-                                            onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-                                            onBlur={(e) => e.target.style.borderColor = 'var(--text-placeholder)'}
+                                            className="w-full px-4 py-2 rounded-lg keycap-input outline-none"
                                             type="password"
                                             placeholder="비밀번호를 입력하세요"
                                             value={roomForm.password}
@@ -498,16 +445,15 @@ function LobbyPage() {
                                 )}
 
                                 <div className="flex gap-2 pt-2">
-                                    <button
+                                    <KeycapButton
                                         onClick={() => setShowCreateModal(false)}
-                                        className="flex-1 py-2 rounded-lg font-semibold transition-opacity"
-                                        style={{ backgroundColor: 'var(--text-sub)', color: 'white' }}
-                                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                        className="flex-1"
+                                        variant="neutral"
+                                        size="md"
                                     >
                                         취소
-                                    </button>
-                                    <button
+                                    </KeycapButton>
+                                    <KeycapButton
                                         onClick={() => {
                                             if (!roomForm.roomName.trim()) {
                                                 alert('방 이름을 입력해주세요.');
@@ -519,14 +465,13 @@ function LobbyPage() {
                                             }
                                             createRoomMutation.mutate(roomForm);
                                         }}
-                                        className="flex-1 py-2 rounded-lg font-semibold text-white transition-opacity"
-                                        style={{ backgroundColor: 'var(--primary)' }}
-                                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-                                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                        className="flex-1"
+                                        variant="primary"
+                                        size="md"
                                         disabled={createRoomMutation.isPending}
                                     >
                                         {createRoomMutation.isPending ? '생성 중...' : '만들기'}
-                                    </button>
+                                    </KeycapButton>
                                 </div>
                             </div>
                         </div>
