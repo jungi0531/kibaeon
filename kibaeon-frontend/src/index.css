@@ -1,16 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  /* Kibaeon Color System */
-  --primary: #219EBC;
-  --secondary: #1F6F8B;
-  --background: #F7F9FB;
-  --point-yellow: #FFB703;
-  --point-orange: #EF5B0C;
-  --text-title: #023047;
-  --text-body: #333333;
-  --text-sub: #6F6F6F;
-  --text-placeholder: #9AA7B2;
-  --error: #EF5B0C;
+  --primary: #D4A574;
+  --secondary: #B8956A;
+  --background: #F9F5EE;
+  --point-yellow: #E8B86D;
+  --point-orange: #D97757;
+  --text-title: #4A3F35;
+  --text-body: #5A4F45;
+  --text-sub: #8A7F75;
+  --text-placeholder: #B0A59B;
+  --error: #C85A54;
   --white: #FFFFFF;
+  --card-bg: #FFFCF7;
+  --sidebar-bg: #EFE8DF;
 
   font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -21,6 +26,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 
 * {
   margin: 0;

@@ -10,15 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @Validated
 public class UserController {
@@ -48,8 +43,15 @@ public class UserController {
     }
 
     @GetMapping("/users/me")
-    public ResponseEntity<UserSummaryInfoResponse> getUserSummaryInfo(Authentication auth) {
+    public ResponseEntity<UserSummaryInfoResponse> getMyInfo(Authentication auth) {
         Long userId = Long.parseLong(auth.getName());
+        UserSummaryInfoResponse response = userService.getUserSummaryInfo(userId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<UserSummaryInfoResponse> getUserById(@PathVariable Long userId) {
         UserSummaryInfoResponse response = userService.getUserSummaryInfo(userId);
 
         return ResponseEntity.ok(response);
