@@ -110,19 +110,6 @@ function LobbyPage() {
         },
     });
 
-    // 방 삭제 mutation
-    const deleteRoomMutation = useMutation({
-        mutationFn: async (roomId: string) => {
-            return await api.delete(`/api/rooms/${roomId}`);
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['rooms'] });
-        },
-        onError: (error: any) => {
-            alert(error.response?.data?.message || "방 삭제에 실패했어요.");
-        },
-    });
-
     // 방 입장 mutation
     const joinRoomMutation = useMutation({
         mutationFn: async ({ roomId, password }: { roomId: string; password?: string }) => {

@@ -1,6 +1,7 @@
 // src/components/KeycapButton.tsx
 
-import { ButtonHTMLAttributes, useState } from 'react';
+import { useState } from 'react';
+import type { ButtonHTMLAttributes } from 'react';
 import { playKeyboardSound } from '../utils/sound';
 
 interface KeycapButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
