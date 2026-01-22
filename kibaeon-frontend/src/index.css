@@ -55,3 +55,161 @@ button {
 input, select, textarea {
   font-family: inherit;
 }
+
+/* 빈티지 키캡 테두리 스타일 */
+.keycap-card {
+  border: 3px solid #4A3F35;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.3), 0 6px 8px rgba(0,0,0,0.15);
+}
+
+.keycap-input {
+  border: 3px solid #4A3F35 !important;
+  background-color: #FFFCF7 !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 1px 0 rgba(255,255,255,0.5) !important;
+  transition: all 0.2s ease !important;
+}
+
+.keycap-input:focus {
+  box-shadow: inset 0 2px 6px rgba(212,165,116,0.3), 0 0 0 2px rgba(212,165,116,0.2) !important;
+  border-color: #D4A574 !important;
+}
+
+.keycap-modal {
+  border: 3px solid #4A3F35;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.3), 0 10px 15px rgba(0,0,0,0.2);
+}
+
+/* 키캡 각인 효과 - 버튼 텍스트에 음영 */
+.keycap-text {
+  text-shadow: 0 1px 1px rgba(255,255,255,0.8), 0 -1px 1px rgba(0,0,0,0.1);
+}
+
+/* 키캡 타이핑 로딩 애니메이션 */
+@keyframes keycap-typing {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.keycap-loading {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.keycap-loading span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #D4A574;
+  border-radius: 2px;
+  border: 2px solid #4A3F35;
+  animation: keycap-typing 1.4s ease-in-out infinite;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.3);
+}
+
+.keycap-loading span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.keycap-loading span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.keycap-loading span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* 키캡 스타일 체크박스/토글 */
+.keycap-toggle {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+}
+
+.keycap-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.keycap-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #C9BCA6;
+  border: 3px solid #4A3F35;
+  border-radius: 8px;
+  transition: all 0.3s;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.3), inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.keycap-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #EBD9B4;
+  border: 2px solid #4A3F35;
+  border-radius: 4px;
+  transition: all 0.3s;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.5);
+}
+
+.keycap-toggle input:checked + .keycap-toggle-slider {
+  background-color: #B8E6B8;
+}
+
+.keycap-toggle input:checked + .keycap-toggle-slider:before {
+  transform: translateX(26px);
+}
+
+.keycap-toggle-slider:active:before {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.keycap-toggle input:checked + .keycap-toggle-slider:active:before {
+  transform: translateX(26px) translateY(2px);
+}
+
+/* 빈 상태 메시지 스타일 */
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.6;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* KIBAEON 로고 스타일 */
+.logo-text {
+  text-shadow:
+    -2px -2px 0 #4A3F35,
+    2px -2px 0 #4A3F35,
+    -2px 2px 0 #4A3F35,
+    2px 2px 0 #4A3F35,
+    0 3px 5px rgba(0,0,0,0.2);
+  letter-spacing: 0.05em;
+}
