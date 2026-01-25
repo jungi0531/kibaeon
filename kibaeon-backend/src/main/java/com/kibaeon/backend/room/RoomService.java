@@ -3,6 +3,7 @@ package com.kibaeon.backend.room;
 import com.kibaeon.backend.room.dto.RoomListResponse;
 import com.kibaeon.backend.user.User;
 import com.kibaeon.backend.user.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -16,11 +17,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class RoomService {
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
-    @Autowired
-    private UserService userService;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final UserService userService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final String ROOM_KEY_PREFIX = "room:";
     private static final String USER_ROOM_KEY_PREFIX = "user:room:";
