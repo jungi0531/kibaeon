@@ -3,6 +3,7 @@ package com.kibaeon.backend.room;
 import com.kibaeon.backend.room.dto.CreateRoomRequest;
 import com.kibaeon.backend.room.dto.JoinRoomRequest;
 import com.kibaeon.backend.room.dto.RoomListResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -12,9 +13,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/rooms")
+@RequiredArgsConstructor
 public class RoomController {
-    @Autowired
-    private RoomService roomService;
+    private final RoomService roomService;
 
     // 방 생성
     @PostMapping
