@@ -3,6 +3,7 @@ import RegisterPage from "./pages/RegisterPage"
 import LoginPage from './pages/LoginPage'
 import LobbyPage from "./pages/LobbyPage"
 import RoomPage from "./pages/RoomPage"
+import PracticePage from "./pages/PracticePage"
 import RequireAuth from "./components/RequireAuth"
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
       <Route element={<RequireAuth />}>
         <Route path="/lobby" element={<LobbyPage />} />
         <Route path="/room/:roomId" element={<RoomPage />} />
+        <Route path="/practice" element={<PracticePage />} />
       </Route>
     </Routes>
   )

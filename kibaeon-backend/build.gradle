@@ -25,25 +25,46 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // ==================== Spring Boot Core ====================
+    // Spring MVC - REST API 웹 서버
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    compileOnly 'org.projectlombok:lombok'
+    // 입력값 검증 (@Valid, @NotNull 등)
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // 개발 시 자동 재시작 (Hot Reload)
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // ==================== Database ====================
+    // JPA - 데이터베이스 ORM
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // MySQL 드라이버
     runtimeOnly 'com.mysql:mysql-connector-j'
+    // Redis - 방 정보 등 실시간 데이터 저장
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // ==================== Security ====================
+    // Spring Security - 인증/인가
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // JWT 토큰 생성 및 검증
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // ==================== WebSocket ====================
+    // WebSocket - 실시간 게임 통신
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // ==================== Utility ====================
+    // Lombok - 보일러플레이트 코드 제거 (@Getter, @Setter 등)
+    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // ==================== Test ====================
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-websocket-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {
