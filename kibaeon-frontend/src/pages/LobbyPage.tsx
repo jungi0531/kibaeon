@@ -167,8 +167,8 @@ function LobbyPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#F7F9FB]">
-                <div className="text-lg text-[#6F6F6F]">로딩 중이에요...</div>
+            <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
+                <LoadingKeycaps text="로비 불러오는 중" />
             </div>
         );
     }
