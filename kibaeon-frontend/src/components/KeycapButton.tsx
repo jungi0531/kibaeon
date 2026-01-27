@@ -5,7 +5,7 @@ import type { ButtonHTMLAttributes } from 'react';
 import { playKeyboardSound } from '../utils/sound';
 
 interface KeycapButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'neutral';
+  variant?: 'primary' | 'secondary' | 'danger' | 'neutral' | 'warning';
   size?: 'sm' | 'md' | 'lg';
   worn?: boolean; // 사용감 표현 (마모된 느낌)
   children: React.ReactNode;
@@ -61,6 +61,11 @@ function KeycapButton({
       backgroundColor: worn ? '#B9AC96' : '#C9BCA6',
       color: 'var(--text-title)',
       border: '3px solid #6F6A5E',
+    },
+    warning: {
+      backgroundColor: worn ? '#E8D174' : '#F5E08A',
+      color: 'var(--text-title)',
+      border: '3px solid #8B7B35',
     },
   };
 

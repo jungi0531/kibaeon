@@ -1,31 +1,46 @@
+# ==================== Spring 설정 ====================
 spring:
-  # mysql
+
+  # ==================== MySQL 데이터베이스 ====================
+  # 유저 정보, 문장 데이터 등 영구 저장 데이터
   datasource:
     url: ${DATABASE_URL:jdbc:mysql://localhost:3306/kibaeon?serverTimezone=Asia/Seoul&characterEncoding=UTF-8}
     username: ${DATABASE_USERNAME:root}
     password: ${DATABASE_PASSWORD:}
 
+  # ==================== JPA/Hibernate ====================
   jpa:
     hibernate:
+      # update: 엔티티 변경 시 테이블 자동 업데이트 (개발용)
       ddl-auto: update
     properties:
       hibernate:
+        # SQL 쿼리 포맷팅 (가독성 향상)
         format_sql: true
+    # 실행되는 SQL 쿼리 콘솔 출력 (디버깅용)
     show-sql: ${SHOW_SQL:true}
 
-  # redis
+  # ==================== Redis ====================
+  # 게임방 정보, 실시간 세션 등 휘발성 데이터 저장
   data:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
 
+# ==================== 서버 설정 ====================
 server:
+  # 백엔드 서버 포트
   port: ${PORT:8080}
 
+# ==================== JWT 인증 ====================
 jwt:
+  # JWT 토큰 서명용 비밀키 (환경변수 필수)
   secret: ${JWT_SECRET}
+  # 토큰 만료 시간 (밀리초, 86400000 = 24시간)
   expiration: 86400000
 
+# ==================== CORS 설정 ====================
 cors:
+  # 프론트엔드 접근 허용 도메인
   allowed-origins: ${CORS_ORIGINS:http://localhost:5173}

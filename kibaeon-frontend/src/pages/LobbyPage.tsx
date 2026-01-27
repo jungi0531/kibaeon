@@ -247,6 +247,13 @@ function LobbyPage() {
                             >
                                 방 만들기
                             </KeycapButton>
+                            <KeycapButton
+                                onClick={() => navigate("/practice")}
+                                variant="warning"
+                                size="md"
+                            >
+                                연습 모드
+                            </KeycapButton>
                         </div>
                     </div>
 
