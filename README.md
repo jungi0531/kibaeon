@@ -1,7 +1,7 @@
 # 🎮 KIBAEON (키배온)
 
 <div align="center">
-<img width="329" src="https://github.com/user-attachments/assets/ac3ec0aa-1a93-48d6-971c-11496afc4c5a" />
+<img width="329" src="" />
 
 **실시간 타자 대결 온라인 멀티플레이어 게임**
 
@@ -9,7 +9,7 @@
 
 ## 배포 주소
 
-> **개발 버전** : 준비 중 <br>
+> **개발 버전** : https://kibaeon.vercel.app/login <br>
 
 ## 개발자 소개
 
@@ -25,7 +25,7 @@
 
 **주요 특징:**
 - ⌨️ 실시간 타자 대결 (1:1 ~ 6인)
-- 🎨 귀여운 픽셀 아트 키캡 캐릭터
+- 🎨 귀여운 키캡 캐릭터
 - 🏆 승률 및 전적 관리
 - 🔒 공개/비공개 방 설정
 - 🎯 연습 모드 지원
@@ -59,10 +59,6 @@
 ### Deployment
 ![Railway](https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
-
-### Communication
-![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)
-![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white)
 
 ---
 
