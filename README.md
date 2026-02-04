@@ -9,7 +9,7 @@
 
 ## 배포 주소
 
-> **개발 버전** : https://kibaeon.vercel.app/login <br>
+> **개발 버전** : https://kibaeon.vercel.app <br>
 
 ## 개발자 소개
 
